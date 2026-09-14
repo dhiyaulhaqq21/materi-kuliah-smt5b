@@ -33,5 +33,6 @@ Mahasiswa mampu :
   - install (npx expo install react-dom react-native-web)
   - npx expo start --web
   - konfirmasi Keberhasilan
+    
   ![alt text](image-3.png)
 
