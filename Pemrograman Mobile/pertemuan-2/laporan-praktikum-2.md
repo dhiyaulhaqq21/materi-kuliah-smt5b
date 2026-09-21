@@ -36,3 +36,13 @@ Mahasiswa mampu :
     
   ![alt text](image-3.png)
 
+4. Tugas Praktikum
+  - Membuat aplikasi CV sederhana dengan React Native
+ -  Nama Lengkap
+ -  NIM
+ -  Asal Sekolah
+ -  Cita-cita
+ -  Rencana Menggapai cita-cita
+ -  konfirmasi keberhasilan
+ <img width="627" height="217" alt="image" src="https://github.com/user-attachments/assets/a7e0dfb9-80b7-4316-9ac5-ec1eb66e84d6" />
+
