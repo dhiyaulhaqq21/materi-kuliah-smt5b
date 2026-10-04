@@ -2,12 +2,10 @@ import React, { useState } from 'react';
 
 import {
   View,
-  StyleSheet,
   Text,
   Image,
   ScrollView,
   FlatList,
-  SectionList,
   TextInput,
   Button,
   TouchableOpacity,
@@ -18,362 +16,225 @@ import {
   StatusBar,
   SafeAreaView,
   Alert,
+  KeyboardAvoidingView,
   Platform,
+  StyleSheet,
 } from 'react-native';
+
 
 const PROFILE = {
   name: 'Muhammad Dhiyaul Haque',
-  title: 'Mobile Developer',
+  title: 'Mahasiswa',
   email: 'elhaqq2106@gmail.com',
   phone: '085706079645',
-  location: 'Pasuruan, Jawa Timur',
-  bio: 'Pengembang aplikasi mobile yang berfokus pada teknologi React Native dan Flutter',
-  avatarOffline: 'assets/foto-profile.png',
+  location: 'Jawa Barat, Indonesia',
+  bio:
+    'Saya adalah seorang mahasiswa yang sedang belajar React Native. Saya tertarik dengan pengembangan aplikasi mobile dan ingin mengembangkan keterampilan saya di bidang ini.',
+
+  avatar: require('./assets/foto-profile.png'),
 };
 
 const SKILLS = [
-  {id: '1', name: 'React Native', level: 90, color: '#61dafb'},
-  {id: '2', name: 'Flutter', level: 80, color: '#02569B'},
-  {id: '3', name: 'JavaScript', level: 85, color: '#f7df1e'},
-  {id: '4', name: 'TypeScript', level: 70, color: '#3178c6'},
-  {id: '5', name: 'Node.js', level: 75, color: '#3776ab'},
-  {id: '6', name: 'Firebase', level: 65, color: '#00B4AB'},
+  {id: '1',name: 'Python',level: 80,color: '#1717ff', },
+  {id: '2',name: 'React Native',level: 60,color: '#ff8c00', },
+  {id: '3',name: 'HTML',level: 90,color: '#008000',},
+  {id: '4',name: 'CSS',level: 85,color: '#d0009b',},
+  {id: '5',name: 'Javascript',level: 50,color: '#ffff00',},
+  {id: '6',name: 'Git',level: 75,color: '#ff4f32',},
+  {id: '7',name: 'UI/UX Design',level: 65,color: '#9b59b6',},
+  {id: '8',name: 'SQL',level: 65,color: '#3498db',},
 ];
 
-
-const SECTION = [
-  {
-    title: '🏫 Pendidikan',
-    data: [
-      {
-        id: '1',
-        role: 'S1 Informatika',
-        company: 'Universitas Islam Negeri Syekh Nurjati Cirebon',
-        period: '2024 - 2029',
-        location: 'Cirebon, Jawa Barat',
-      },
-    ],
-  },
-  {
-    title: '💼 Pengalaman Kerja',
-    data: [
-      {
-        id: '2',
-        role: 'Frontend Developer',
-        company: 'Frontend Development',
-        period: '2024 - Present',
-        location: 'Jakarta, Indonesia',
-      },
-    ],
-  },
+const EDUCATION = [
+  {id: '1',title: 'S1 Informatika',place: 'Universitas',period: '2024 - Sekarang',},
+  {id: '2',title: 'SMA / Sederajat',place: 'Sekolah Menengah',period: '2021 - 2024',},
 ];
 
-// ===============================
-// DATA SOCIAL
-// ===============================
-
-const SOCIAL = [
-  {id: '1', name: 'GitHub', url: 'https://github.com/dhiyaulhaqq21'},
-  {id: '2', name: 'Instagram', url: 'https://www.instagram.com/elhaq__ue2106/'},
+const EXPERIENCES = [
+  {id: '1',title: 'Frontend Developer',place: 'Project Development',period: '2024 - Sekarang',},
+  {id: '2',title: 'Anggota Organisasi',place: 'Organisasi Kemahasiswaan',period: '2024 - Sekarang',},
 ];
 
-const SkillCard = ({ item }) => (
-  <View style={styles.skillCard}>
-
-    <View style={styles.skillHeader}>
-      <Text style={styles.skillName}>
-        {item.name}
-      </Text>
-
-      <Text style={styles.skillPercent}>
-        {item.level}%
-      </Text>
+const SkillItem = ({ item }) => {
+  return (
+    <View style={styles.skillCard}>
+      <Text style={styles.skillName}>{item.name}</Text>
+      <Text style={styles.skillPercent}>{item.level}%</Text>
+      <View style={styles.progressBackground}>
+        <View  style={[styles.progressFill,{      
+          width: `${item.level}%`,      
+          backgroundColor: item.color,    
+          },  
+        ]}/>
+      </View>
     </View>
-
-    <View style={styles.progressBg}>
-      <View
-        style={[
-          styles.progressFill,
-          {
-            width: `${item.level}%`,
-            backgroundColor: item.color,
-          },
-        ]}
-      />
-    </View>
-
-  </View>
-);
-
-// SUB COMPONENT : TIMELINE CARD
-
-const TimelineCard = ({ item, onPress }) => (
-  <TouchableOpacity
-    style={styles.timelineCard}
-    onPress={() => onPress(item)}
-    activeOpacity={0.75}
-  >
-
-    <View style={styles.timelineDot} />
-
-    <View style={styles.timelineContent}>
-
-      <Text style={styles.timelineRole}>
-        {item.role}
-      </Text>
-
-      <Text style={styles.timelineCompany}>
-        {item.company}
-      </Text>
-
-      <Text style={styles.timelinePeriod}>
-        {item.period}
-      </Text>
-
-      <Text style={styles.timelineLocation}>
-        📍 {item.location}
-      </Text>
-
-      <Text style={styles.timelineHint}>
-        Ketuk untuk melihat detail
-      </Text>
-
-    </View>
-
-  </TouchableOpacity>
-);
-
+  );
+};
 
 export default function App() {
+  const [openToWork, setOpenToWork] =useState(true);  
+  const [modalVisible, setModalVisible] =useState(false);  
+  const [selectedItem, setSelectedItem] =useState(null);  
+  const [senderName, setSenderName] =useState('');  
+  const [message, setMessage] =useState('');  
+  const [sending, setSending] =useState(false);
 
-  const [openToWork, setOpenToWork] = useState(true);
-
-  const [selectedItem, setSelectedItem] = useState(null);
-
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const [senderName, setSenderName] = useState('');
-
-  const [message, setMessage] = useState('');
-
-  const [sending, setSending] = useState(false);
-
-  const handleCardPress = (item) => {
+  const showDetail = (item) => {
     setSelectedItem(item);
     setModalVisible(true);
   };
 
-  const handleSend = () => {
+  const downloadCV = () => {Alert.alert('Download CV','Fitur download CV berhasil dijalankan.');};
+  const openSocial = (name) => {Alert.alert(name, `Membuka profil ${name}`);};
 
-    if (!senderName.trim() || !message.trim()) {
-
-      Alert.alert(
-        'Error',
-        'Nama dan pesan tidak boleh kosong'
-      );
-
+  const sendMessage = () => {
+    if (senderName.trim() === '' || message.trim() === '') {
+      Alert.alert('Peringatan', 'Nama dan pesan harus diisi.');
       return;
     }
-
     setSending(true);
-
     setTimeout(() => {
-
       setSending(false);
-
-      Alert.alert(
-        'Success',
-        `Pesan dari ${senderName} berhasil dikirim`
-      );
-
+      Alert.alert('Berhasil', 'Pesan berhasil dikirim.');
       setSenderName('');
       setMessage('');
-      setModalVisible(false);
-
     }, 2000);
   };
 
-  // ===============================
-  // RENDER
-  // ===============================
-
   return (
-<<<<<<< HEAD
     <SafeAreaView style={styles.safeArea}>
-
       <StatusBar
         barStyle="light-content"
-        backgroundColor="#1a1a2e"
+        backgroundColor="#151427"
       />
-
       <ScrollView
         showsVerticalScrollIndicator={false}
-      >
+        contentContainerStyle={
+          styles.scrollContainer
+        }>
 
-        {/* ================= HEADER ================= */}
-
-        <View style={styles.header}>
-
-          <Text style={styles.headerTitle}>
-            Curriculum Vitae
-          </Text>
-
-          <View style={styles.switchRow}>
-
-            <Text style={styles.switchLabel}>
-              {openToWork
-                ? 'Sedang Mencari Pekerjaan'
-                : 'Tidak Sedang Mencari Pekerjaan'}
-            </Text>
-
+        <View style={styles.topHeader}>
+          <Text style={styles.headerTitle}>Curriculum Vitae</Text>
+          <View style={styles.openWorkContainer}>
+            <Text style={styles.openWorkText}>Open</Text>
             <Switch
               value={openToWork}
-              onValueChange={(value) => setOpenToWork(value)}
+              onValueChange={setOpenToWork}
               trackColor={{
-                false: '#767577',
-                true: '#81b0ff',
+                false: '#555',
+                true: '#35c77b',
               }}
-              thumbColor={
-                openToWork
-                  ? '#f5dd4b'
-                  : '#f4f3f4'
-              }
+              thumbColor="#ffffff"
             />
-
           </View>
-
         </View>
-
-        {/* ================= PROFILE ================= */}
-
         <View style={styles.profileCard}>
-
-          <View style={styles.avatar}>
-
-            <Image
-              source={require('foto-profile.png')}
-              style={styles.avatarImage}
-            />
-
+          <View style={styles.avatarWrapper}>
+            <Image source={PROFILE.avatar} style={styles.avatar}/>
           </View>
-
-          <Text style={styles.profileName}>
-            {PROFILE.name}
-          </Text>
-
-          <Text style={styles.profileTitle}>
-            {PROFILE.title}
-          </Text>
-
-          <Text style={styles.profileBio}>
-            {PROFILE.bio}
-          </Text>
-
-        </View>
-
-        {/* ================= CONTACT ================= */}
-
-        <View style={styles.sectionContainer}>
-
-          <Text style={styles.sectionTitle}>
-            📞 Kontak
-          </Text>
-
-          <View style={styles.infoCard}>
-
-            <Text style={styles.infoText}>
-              📧 {PROFILE.email}
-            </Text>
-
-            <Text style={styles.infoText}>
-              📱 {PROFILE.phone}
-            </Text>
-
-            <Text style={styles.infoText}>
-              📍 {PROFILE.location}
-            </Text>
-
-          </View>
-
-        </View>
-
-        {/* ================= SKILLS ================= */}
-
-        <View style={styles.sectionContainer}>
-
-          <Text style={styles.sectionTitle}>
-            💻 Skills
-          </Text>
-
-          {SKILLS.map((item) => (
-            <SkillCard
-              key={item.id}
-              item={item}
-            />
-          ))}
-
-        </View>
-
-        {/* ================= EDUCATION & EXPERIENCE ================= */}
-
-        <View style={styles.sectionContainer}>
-
-          <Text style={styles.sectionTitle}>
-            📚 Pendidikan & Pengalaman
-          </Text>
-
-          {SECTION.map((section) => (
-
-            <View key={section.title}>
-
-              <Text style={styles.subSectionTitle}>
-                {section.title}
-              </Text>
-
-              {section.data.map((item) => (
-
-                <TimelineCard
-                  key={item.id}
-                  item={item}
-                  onPress={handleCardPress}
-                />
-
-              ))}
-
+          {openToWork && (
+            <View style={styles.openBadge}>
+              <Text style={styles.openBadgeText}>Open to Work</Text>
             </View>
+          )}
 
-          ))}
+          <Text style={styles.name}>\{PROFILE.name}</Text>
+          <Text style={styles.title}>\{PROFILE.title}</Text>
+          <Text style={styles.bio}>\{PROFILE.bio}</Text>
 
+          <View style={styles.contactRow}>
+            <Text style={styles.contactText}>{PROFILE.email}</Text>
+            <Text style={styles.dot}>•</Text>
+            <Text style={styles.contactText}>{PROFILE.location}</Text>
+          </View>
+          <Text style={styles.phone}>{PROFILE.phone}</Text>
+          <View style={styles.socialContainer}>
+            <TouchableOpacity
+              style={styles.socialButton}
+              onPress={() => openSocial('Instagram')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.socialIcon}>\IG</Text>
+              <Text style={styles.socialText}>\Instagram</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.socialButton}
+              onPress={() =>openSocial('GitHub')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.socialIcon}>Git</Text>
+              <Text style={styles.socialText}>GitHub</Text>
+            </TouchableOpacity>
+          </View>
+
+          <Pressable onPress={downloadCV} style={({ pressed }) => [styles.downloadButton, pressed && styles.downloadPressed,]}>
+            <Text style={styles.downloadText}>
+              Download CV (PDF)
+            </Text>
+          </Pressable>
         </View>
-
-        {/* ================= SOCIAL ================= */}
-
-        <View style={styles.sectionContainer}>
-
-          <Text style={styles.sectionTitle}>
-            🌐 Social Media
-          </Text>
-
-          {SOCIAL.map((item) => (
-
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Keahlian</Text>
+          <Text style={styles.sectionDescription}>FlatList menampilkan data secara efisien</Text>
+          <FlatList
+            data={SKILLS}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (<SkillItem item={item}/>)}
+            scrollEnabled={false}
+          />
+        </View>
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>Pendidikan</Text>
+          {EDUCATION.map((item) => (
             <TouchableOpacity
               key={item.id}
-              style={styles.socialCard}
-              onPress={() => {
-                Alert.alert(
-                  item.name,
-                  item.url
-                );
-              }}
+              style={styles.historyCard}
+              onPress={() => showDetail(item)}
+              activeOpacity={0.7}
             >
+              <View style={styles.historyDot} />
+              <View style={styles.historyContent}>
+                <Text style={styles.historyTitle}>{item.title}</Text>
+                <Text style={styles.historyPlace}>{item.place}</Text>
+                <Text style={styles.historyPeriod}>{item.period}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+        {/* ==================================================
+            PENGALAMAN
+        ==================================================== */}
 
-              <Text style={styles.socialName}>
-                {item.name}
-              </Text>
+        <View style={styles.sectionCard}>
+          <Text style={styles.sectionTitle}>
+            Pengalaman & Organisasi
+          </Text>
+          {EXPERIENCES.map((item) => (
+            <TouchableOpacity
+              key={item.id}
+              style={styles.historyCard}
+              onPress={() =>
+                showDetail(item)
+              }
+              activeOpacity={0.7}
+            >
+              <View style={styles.historyDot} />
 
-              <Text style={styles.socialUrl}>
-                {item.url}
-              </Text>
+              <View style={styles.historyContent}>
+
+                <Text style={styles.historyTitle}>
+                  {item.title}
+                </Text>
+
+                <Text style={styles.historyPlace}>
+                  {item.place}
+                </Text>
+
+                <Text style={styles.historyPeriod}>
+                  {item.period}
+                </Text>
+
+              </View>
 
             </TouchableOpacity>
 
@@ -381,467 +242,523 @@ export default function App() {
 
         </View>
 
-        {/* ================= CONTACT BUTTON ================= */}
+        {/* ====================================================
+            KONTAK
+        ==================================================== */}
 
-        <View style={styles.buttonContainer}>
+        <KeyboardAvoidingView
+          behavior={
+            Platform.OS === 'ios'
+              ? 'padding'
+              : 'height'
+          }
+        >
 
-          <TouchableOpacity
-            style={styles.contactButton}
-            onPress={() => setModalVisible(true)}
-          >
+          <View style={styles.sectionCard}>
 
-            <Text style={styles.contactButtonText}>
+            <Text style={styles.sectionTitle}>
               Hubungi Saya
             </Text>
 
-          </TouchableOpacity>
+            {/* Nama */}
 
-        </View>
-
-      </ScrollView>
-
-      {/* ================= MODAL ================= */}
-
-      <Modal
-        visible={modalVisible}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setModalVisible(false)}
-      >
-
-        <View style={styles.modalOverlay}>
-
-          <View style={styles.modalContainer}>
-
-            {/* Jika timeline dipilih */}
-
-            {selectedItem && (
-              <View>
-
-                <Text style={styles.modalTitle}>
-                  Detail
-                </Text>
-
-                <Text style={styles.modalRole}>
-                  {selectedItem.role}
-                </Text>
-
-                <Text style={styles.modalCompany}>
-                  {selectedItem.company}
-                </Text>
-
-                <Text style={styles.modalInfo}>
-                  📅 {selectedItem.period}
-                </Text>
-
-                <Text style={styles.modalInfo}>
-                  📍 {selectedItem.location}
-                </Text>
-
-              </View>
-            )}
-
-            <Text style={styles.modalTitle}>
-              Hubungi Saya
+            <Text style={styles.inputLabel}>
+              Nama
             </Text>
 
             <TextInput
               style={styles.input}
-              placeholder="Nama"
-              placeholderTextColor="#999"
+              placeholder="Masukkan nama"
+              placeholderTextColor="#777"
               value={senderName}
-              onChangeText={setSenderName}
+              onChangeText={
+                setSenderName
+              }
             />
+
+            {/* Pesan */}
+
+            <Text style={styles.inputLabel}>
+              Pesan
+            </Text>
 
             <TextInput
               style={[
                 styles.input,
                 styles.messageInput,
               ]}
-              placeholder="Pesan"
-              placeholderTextColor="#999"
+              placeholder="Tulis pesan..."
+              placeholderTextColor="#777"
               value={message}
-              onChangeText={setMessage}
+              onChangeText={
+                setMessage
+              }
               multiline
             />
 
+            {/* Tombol */}
+
             <TouchableOpacity
-              style={styles.sendButton}
-              onPress={handleSend}
-              disabled={sending}
+              style={
+                styles.sendButton
+              }
+              onPress={
+                sendMessage
+              }
+              disabled={
+                sending
+              }
+              activeOpacity={0.8}
             >
 
               {sending ? (
 
-                <ActivityIndicator
-                  color="#fff"
-                />
+                <View
+                  style={styles.loadingContainer}
+                >
+
+                  <ActivityIndicator
+                    color="#ffffff"
+                  />
+
+                  <Text
+                    style={
+                      styles.sendText
+                    }
+                  >
+                    Mengirim...
+                  </Text>
+
+                </View>
 
               ) : (
 
-                <Text style={styles.sendButtonText}>
+                <Text
+                  style={
+                    styles.sendText
+                  }
+                >
                   Kirim Pesan
                 </Text>
-
               )}
-
             </TouchableOpacity>
+            <Button
+              title="Reset Form"
+              onPress={() => {
+                setSenderName('');
+                setMessage('');
+              }}
+            />
+          </View>
+        </KeyboardAvoidingView>
+      </ScrollView>
 
+      <Modal
+        visible={modalVisible}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() =>
+          setModalVisible(false)
+        }
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modal}>
+            <Text style={styles.modalTitle}>Detail</Text>
+            {selectedItem && (
+              <>
+                <Text style={styles.modalItemTitle}>{selectedItem.title}]</Text>
+                <Text style={styles.modalItemText}>{selectedItem.place}]</Text>
+                <Text style={styles.modalItemText}>{selectedItem.period}]</Text>
+              </>
+            )}
             <TouchableOpacity
-              style={styles.closeButton}
+              style={styles.closeButton}    
               onPress={() => {
                 setModalVisible(false);
                 setSelectedItem(null);
-              }}
-            >
-
-              <Text style={styles.closeButtonText}>
-                Tutup
-              </Text>
-
+              }}>
+              <Text style={styles.closeButtonText}>Tutup</Text>
             </TouchableOpacity>
-
           </View>
-
         </View>
-
       </Modal>
-
     </SafeAreaView>
-=======
-   <View style={styles.container}>
-      <Text>Nama : Muhammad Dhiyaul Haque</Text>
-      <Text>NIM : 2488010041</Text>
-      <Text>Asal Sekolah : SMA I Plus Hidayatut Thullab Kediri</Text>
-      <Text>Cita-Cita : Programmer</Text>
-      <Text>Rencana Menggapai Cita-Cita : Membuat aplikasi mobile yang bermanfaat</Text>
-      <StatusBar style="auto" />
-    </View>
->>>>>>> 729ef8a7f19024477ea6eb3f5efd129c414cdc51
   );
 }
-
-// ===============================
-// STYLES
-// ===============================
 
 const styles = StyleSheet.create({
 
   safeArea: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#111020',
   },
 
-  header: {
-    backgroundColor: '#1a1a2e',
-    paddingHorizontal: 20,
-    paddingVertical: 25,
+  scrollContainer: {
+    paddingBottom: 30,
   },
 
-  headerTitle: {
-    color: '#fff',
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 20,
-  },
-
-  switchRow: {
+  topHeader: {
+    height: 62,
+    backgroundColor: '#17162b',
+    borderBottomWidth: 1,
+    borderBottomColor: '#282640',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingHorizontal: 15,
   },
 
-  switchLabel: {
-    color: '#fff',
-    fontSize: 14,
-    flex: 1,
-    marginRight: 10,
+  headerTitle: {
+    color: '#ffffff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+
+  openWorkContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  openWorkText: {
+    color: '#ffffff',
+    fontSize: 10,
+    marginRight: 3,
   },
 
   profileCard: {
-    backgroundColor: '#fff',
-    margin: 16,
-    padding: 24,
-    borderRadius: 16,
+    backgroundColor: '#17162b',
+    marginBottom: 12,
+    paddingTop: 25,
+    paddingBottom: 22,
+    paddingHorizontal: 25,
     alignItems: 'center',
-    elevation: 3,
+    borderBottomLeftRadius: 22,
+    borderBottomRightRadius: 22,
+    borderBottomWidth: 2,
+    borderBottomColor: '#5525a5',
+  },
+
+  avatarWrapper: {
+    width: 92,
+    height: 92,
+    borderRadius: 46,
+    borderWidth: 2,
+    borderColor: '#8c21ff',
+    padding: 2,
+    marginBottom: 8,
   },
 
   avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#1a1a2e',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 15,
+    width: '100%',
+    height: '100%',
+    borderRadius: 46,
   },
 
-  avatarText: {
-    color: '#fff',
-    fontSize: 24,
-    fontWeight: 'bold',
+  openBadge: {
+    borderWidth: 1,
+    borderColor: '#2ecc71',
+    borderRadius: 20,
+    paddingHorizontal: 9,
+    paddingVertical: 3,
+    marginBottom: 8,
   },
 
-  profileName: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#222',
-    textAlign: 'center',
+  openBadgeText: {
+    color: '#48d27a',
+    fontSize: 10,
   },
 
-  profileTitle: {
-    fontSize: 16,
-    color: '#555',
-    marginTop: 5,
+  name: {
+    color: '#ffffff',
+    fontSize: 13,
+    fontWeight: '700',
+    marginBottom: 2,
   },
 
-  profileBio: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-    marginTop: 12,
-    lineHeight: 21,
-  },
-
-  sectionContainer: {
-    marginHorizontal: 16,
-    marginBottom: 20,
-  },
-
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1a1a2e',
+  title: {
+    color: '#9f8bd4',
+    fontSize: 11,
     marginBottom: 12,
   },
 
-  subSectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#444',
-    marginTop: 8,
+  bio: {
+    color: '#8f8ca0',
+    fontSize: 10,
+    lineHeight: 15,
+    textAlign: 'center',
+    maxWidth: 350,
     marginBottom: 10,
   },
 
-  infoCard: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    elevation: 2,
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 
-  infoText: {
-    fontSize: 14,
-    color: '#444',
+  contactText: {
+    color: '#8f8ca0',
+    fontSize: 9,
+  },
+
+  dot: {
+    color: '#777',
+    marginHorizontal: 7,
+  },
+
+  phone: {
+    color: '#8f8ca0',
+    fontSize: 9,
+    marginTop: 5,
+  },
+
+  socialContainer: {
+    flexDirection: 'row',
+    marginTop: 14,
+    gap: 7,
+  },
+
+  socialButton: {
+    width: 64,
+    height: 47,
+    borderWidth: 1,
+    borderColor: '#2c2943',
+    borderRadius: 9,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#17162b',
+  },
+
+  socialIcon: {
+    color: '#ffffff',
+    fontSize: 12,
+    marginBottom: 2,
+  },
+
+  socialText: {
+    color: '#8f78c5',
+    fontSize: 8,
+  },
+
+  downloadButton: {
+    marginTop: 17,
+    width: 150,
+    height: 35,
+    borderRadius: 20,
+    backgroundColor: '#54209d',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#812fff',
+    shadowOffset: {
+      width: 0,
+      height: 0,
+    },
+    shadowOpacity: 0.7,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+
+  downloadPressed: {
+    opacity: 0.6,
+    transform: [
+      {scale: 0.96,},
+    ],
+  },
+
+  downloadText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: '600',
+  },
+
+  sectionCard: {
+    backgroundColor: '#18172d',
+    marginHorizontal: 12,
+    marginBottom: 12,
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: '#292642',
+  },
+
+  sectionTitle: {
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 2,
+  },
+
+  sectionDescription: {
+    color: '#777487',
+    fontSize: 9,
+    fontStyle: 'italic',
     marginBottom: 10,
   },
 
   skillCard: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 10,
-    elevation: 2,
-  },
-
-  skillHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 8,
+    backgroundColor: '#12254a',
+    borderWidth: 1,
+    borderColor: '#1d3766',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    marginBottom: 7,
   },
 
   skillName: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#333',
+    color: '#eeeeee',
+    fontSize: 10,
+    marginBottom: 1,
   },
 
   skillPercent: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#555',
+    color: '#b4a8d4',
+    fontSize: 9,
+    marginBottom: 3,
   },
 
-  progressBg: {
-    height: 8,
-    backgroundColor: '#e5e5e5',
-    borderRadius: 10,
+  progressBackground: {
+    width: '100%',
+    height: 6,
+    backgroundColor: '#08162d',
+    borderRadius: 5,
     overflow: 'hidden',
   },
 
   progressFill: {
     height: '100%',
-    borderRadius: 10,
+    borderRadius: 5,
   },
 
-  timelineCard: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
-    flexDirection: 'row',
-    elevation: 2,
-  },
-
-  timelineDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
-    backgroundColor: '#1a1a2e',
-    marginTop: 5,
-    marginRight: 12,
-  },
-
-  timelineContent: {
-    flex: 1,
-  },
-
-  timelineRole: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#222',
-  },
-
-  timelineCompany: {
-    fontSize: 14,
-    color: '#555',
-    marginTop: 4,
-  },
-
-  timelinePeriod: {
-    fontSize: 13,
-    color: '#777',
-    marginTop: 4,
-  },
-
-  timelineLocation: {
-    fontSize: 13,
-    color: '#777',
-    marginTop: 4,
-  },
-
-  timelineHint: {
-    fontSize: 11,
-    color: '#999',
+  historyCard: {
+    backgroundColor: '#12254a',
+    borderWidth: 1,
+    borderColor: '#1d3766',
+    borderRadius: 9,
+    padding: 12,
     marginTop: 8,
-    fontStyle: 'italic',
-  },
-
-  socialCard: {
-    backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 10,
-    elevation: 2,
-  },
-
-  socialName: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#222',
-  },
-
-  socialUrl: {
-    fontSize: 13,
-    color: '#555',
-    marginTop: 5,
-  },
-
-  buttonContainer: {
-    marginHorizontal: 16,
-    marginBottom: 30,
-  },
-
-  contactButton: {
-    backgroundColor: '#1a1a2e',
-    padding: 16,
-    borderRadius: 12,
+    flexDirection: 'row',
     alignItems: 'center',
   },
 
-  contactButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+  historyDot: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#7038d4',
+    marginRight: 10,
   },
 
-  modalOverlay: {
+  historyContent: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    padding: 20,
   },
 
-  modalContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 20,
+  historyTitle: {
+    color: '#ffffff',
+    fontSize: 12,
+    fontWeight: '600',
   },
 
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1a1a2e',
-    marginBottom: 15,
+  historyPlace: {
+    color: '#aaa2bd',
+    fontSize: 10,
+    marginTop: 3,
   },
 
-  modalRole: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#222',
+  historyPeriod: {
+    color: '#777487',
+    fontSize: 9,
+    marginTop: 3,
   },
 
-  modalCompany: {
-    fontSize: 15,
-    color: '#555',
-    marginTop: 5,
-    marginBottom: 10,
-  },
-
-  modalInfo: {
-    fontSize: 14,
-    color: '#555',
+  inputLabel: {
+    color: '#aaa2bd',
+    fontSize: 10,
     marginBottom: 5,
+    marginTop: 8,
   },
 
   input: {
+    backgroundColor: '#101d38',
     borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 10,
-    padding: 12,
-    fontSize: 14,
-    color: '#222',
-    marginBottom: 12,
+    borderColor: '#263c63',
+    borderRadius: 8,
+    color: '#ffffff',
+    paddingHorizontal: 10,
+    paddingVertical: 9,
+    fontSize: 11,
   },
 
   messageInput: {
-    height: 100,
+    height: 90,
     textAlignVertical: 'top',
   },
 
   sendButton: {
-    backgroundColor: '#1a1a2e',
-    padding: 14,
-    borderRadius: 10,
+    backgroundColor: '#54209d',
+    borderRadius: 9,
+    paddingVertical: 11,
     alignItems: 'center',
+    marginTop: 12,
     marginBottom: 10,
   },
 
-  sendButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+  sendText: {
+    color: '#ffffff',
+    fontSize: 11,
+    fontWeight: '600',
+  },
+
+  loadingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    backgroundColor:'rgba(0,0,0,0.65)',
+    justifyContent: 'center',
+    padding: 20,
+  },
+
+  modal: {
+    backgroundColor: '#1b1932',
+    borderRadius: 15,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#5e39a5',
+  },
+
+  modalTitle: {
+    color: '#ffffff',
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 15,
+  },
+
+  modalItemTitle: {
+    color: '#ffffff',
+    fontSize: 15,
+    fontWeight: '600',
+  },
+
+  modalItemText: {
+    color: '#aaa2bd',
+    fontSize: 12,
+    marginTop: 6,
   },
 
   closeButton: {
-    backgroundColor: '#eee',
-    padding: 14,
-    borderRadius: 10,
+    backgroundColor: '#54209d',
+    borderRadius: 8,
+    paddingVertical: 10,
     alignItems: 'center',
+    marginTop: 18,
   },
-
+  
   closeButtonText: {
-    color: '#333',
-    fontWeight: 'bold',
+    color: '#ffffff',
+    fontWeight: '600',
   },
 });

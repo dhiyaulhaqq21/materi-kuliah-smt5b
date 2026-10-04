@@ -37,11 +37,7 @@ Mahasiswa mampu :
     
   ![alt text](image-3.png)
 
-<<<<<<< HEAD
 4.  Tugas Praktikum
-=======
-4. Tugas Praktikum
->>>>>>> 729ef8a7f19024477ea6eb3f5efd129c414cdc51
   - Membuat aplikasi CV sederhana dengan React Native
  -  Nama Lengkap
  -  NIM
@@ -49,10 +45,4 @@ Mahasiswa mampu :
  -  Cita-cita
  -  Rencana Menggapai cita-cita
  -  konfirmasi keberhasilan
-<<<<<<< HEAD
  <img width="627" height="217" alt="image" src="https://github.com/user-attachments/assets/a7e0dfb9-80b7-4316-9ac5-ec1eb66e84d6" / width = "25%">
-=======
- <img width="683" height="328" alt="image" src="https://github.com/user-attachments/assets/6dc708fb-3842-4740-b003-cffa91bc2423" />
-
-
->>>>>>> 729ef8a7f19024477ea6eb3f5efd129c414cdc51

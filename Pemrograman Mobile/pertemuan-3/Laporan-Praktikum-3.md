@@ -21,4 +21,3 @@
 ![alt text](image-2.png)
 
 ### Langkah 3: Sub-Components (SkillCard & TimelineCard) ###
-
