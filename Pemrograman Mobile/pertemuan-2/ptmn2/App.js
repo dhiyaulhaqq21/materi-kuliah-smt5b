@@ -137,7 +137,6 @@ export default function App() {
               <Text style={styles.openBadgeText}>Open to Work</Text>
             </View>
           )}
-
           <Text style={styles.name}>\{PROFILE.name}</Text>
           <Text style={styles.title}>\{PROFILE.title}</Text>
           <Text style={styles.bio}>\{PROFILE.bio}</Text>
@@ -201,10 +200,6 @@ export default function App() {
             </TouchableOpacity>
           ))}
         </View>
-        {/* ==================================================
-            PENGALAMAN
-        ==================================================== */}
-
         <View style={styles.sectionCard}>
           <Text style={styles.sectionTitle}>
             Pengalaman & Organisasi
@@ -213,146 +208,60 @@ export default function App() {
             <TouchableOpacity
               key={item.id}
               style={styles.historyCard}
-              onPress={() =>
-                showDetail(item)
-              }
+              onPress={() => showDetail(item)}
               activeOpacity={0.7}
             >
               <View style={styles.historyDot} />
-
               <View style={styles.historyContent}>
-
-                <Text style={styles.historyTitle}>
-                  {item.title}
-                </Text>
-
-                <Text style={styles.historyPlace}>
-                  {item.place}
-                </Text>
-
-                <Text style={styles.historyPeriod}>
-                  {item.period}
-                </Text>
-
+                <Text style={styles.historyTitle}>{item.title}</Text>
+                <Text style={styles.historyPlace}>{item.place}</Text>
+                <Text style={styles.historyPeriod}>{item.period}</Text>
               </View>
-
             </TouchableOpacity>
-
           ))}
-
         </View>
-
-        {/* ====================================================
-            KONTAK
-        ==================================================== */}
-
         <KeyboardAvoidingView
-          behavior={
-            Platform.OS === 'ios'
-              ? 'padding'
-              : 'height'
-          }
+          behavior={Platform.OS === 'ios'  ? 'padding'  : 'height'}
         >
-
           <View style={styles.sectionCard}>
-
-            <Text style={styles.sectionTitle}>
-              Hubungi Saya
-            </Text>
-
+            <Text style={styles.sectionTitle}>Hubungi Saya</Text>
             {/* Nama */}
-
-            <Text style={styles.inputLabel}>
-              Nama
-            </Text>
-
+            <Text style={styles.inputLabel}>Nama</Text>
             <TextInput
               style={styles.input}
               placeholder="Masukkan nama"
               placeholderTextColor="#777"
               value={senderName}
-              onChangeText={
-                setSenderName
-              }
+              onChangeText={setSenderName}
             />
-
             {/* Pesan */}
-
-            <Text style={styles.inputLabel}>
-              Pesan
-            </Text>
-
+            <Text style={styles.inputLabel}>Pesan</Text>
             <TextInput
-              style={[
-                styles.input,
-                styles.messageInput,
-              ]}
+              style={[styles.input,styles.messageInput,]}
               placeholder="Tulis pesan..."
               placeholderTextColor="#777"
               value={message}
-              onChangeText={
-                setMessage
-              }
+              onChangeText={setMessage}
               multiline
             />
-
             {/* Tombol */}
-
             <TouchableOpacity
-              style={
-                styles.sendButton
-              }
-              onPress={
-                sendMessage
-              }
-              disabled={
-                sending
-              }
+              style={styles.sendButton}
+              onPress={sendMessage}
+              disabled={sending}
               activeOpacity={0.8}
             >
-
               {sending ? (
-
-                <View
-                  style={styles.loadingContainer}
-                >
-
-                  <ActivityIndicator
-                    color="#ffffff"
-                  />
-
-                  <Text
-                    style={
-                      styles.sendText
-                    }
-                  >
-                    Mengirim...
-                  </Text>
-
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator color="#ffffff"/>
+                  <Text style={styles.sendText}>Mengirim... </Text>
                 </View>
-
-              ) : (
-
-                <Text
-                  style={
-                    styles.sendText
-                  }
-                >
-                  Kirim Pesan
-                </Text>
-              )}
+              ) : (<Text style={styles.sendText}> Kirim Pesan</Text>)}
             </TouchableOpacity>
-            <Button
-              title="Reset Form"
-              onPress={() => {
-                setSenderName('');
-                setMessage('');
-              }}
-            />
+            <Button title="Reset Form" onPress={() => {setSenderName('');setMessage('');}}/>
           </View>
         </KeyboardAvoidingView>
       </ScrollView>
-
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -366,9 +275,9 @@ export default function App() {
             <Text style={styles.modalTitle}>Detail</Text>
             {selectedItem && (
               <>
-                <Text style={styles.modalItemTitle}>{selectedItem.title}]</Text>
-                <Text style={styles.modalItemText}>{selectedItem.place}]</Text>
-                <Text style={styles.modalItemText}>{selectedItem.period}]</Text>
+                <Text style={styles.modalItemTitle}>{selectedItem.title}</Text>
+                <Text style={styles.modalItemText}>{selectedItem.place}</Text>
+                <Text style={styles.modalItemText}>{selectedItem.period}</Text>
               </>
             )}
             <TouchableOpacity
